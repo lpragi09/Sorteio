@@ -54,7 +54,6 @@
         button:hover:not(:disabled) { transform: scale(1.05); filter: brightness(1.2); }
         button:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
 
-        /* Ajuste na área de status para alinhar lado a lado */
         #msgStatus { 
             color: #ff00ff; 
             font-weight: bold; 
@@ -76,7 +75,7 @@
             flex-wrap: wrap;
         }
 
-        .nome-sorteado { color: #fff; }
+        .nome-branco { color: #fff; }
 
         .relogio { font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px #ff00ff; margin-top: 5px; }
 
@@ -91,7 +90,20 @@
         #timeTR h2 { color: #de9b35; }
 
         ul { list-style: none; padding: 0; margin: 0; }
-        li { background: rgba(255, 255, 255, 0.03); margin: 8px 0; padding: 12px; font-size: 1.2rem; border-left: 4px solid #666; animation: slideIn 0.8s ease-out forwards; font-weight: bold; text-align: left; }
+        
+        /* Cores dos nomes dentro das caixas */
+        #listaCT li { color: #5d79ae; border-left: 4px solid #5d79ae; }
+        #listaTR li { color: #de9b35; border-left: 4px solid #de9b35; }
+
+        li { 
+            background: rgba(255, 255, 255, 0.03); 
+            margin: 8px 0; 
+            padding: 12px; 
+            font-size: 1.2rem; 
+            animation: slideIn 0.8s ease-out forwards; 
+            font-weight: bold; 
+            text-align: left; 
+        }
 
         @keyframes slideIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
@@ -100,7 +112,7 @@
 
     <div class="container">
         <h1>Mix do Soso Gostoso</h1>
-        <div class="sub-titulo">Sorteio manual com suspense de 5 segundos</div>
+        <div class="sub-titulo">Sorteio 5x5 Mix</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
@@ -142,13 +154,11 @@
             const trCount = listaTR.children.length;
 
             if (ctCount < 5 && (Math.random() > 0.5 || trCount >= 5)) {
-                li.style.borderColor = "#5d79ae";
                 listaCT.appendChild(li);
-                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-sorteado">TIME A</span></div>`;
+                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-branco">TIME A</span></div>`;
             } else if (trCount < 5) {
-                li.style.borderColor = "#de9b35";
                 listaTR.appendChild(li);
-                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-sorteado">TIME B</span></div>`;
+                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-branco">TIME B</span></div>`;
             } else {
                 alert("Todos os times já estão lotados!");
             }
@@ -192,15 +202,12 @@
                     var li = document.createElement('li');
                     li.innerText = escolhido;
 
-                    // Lógica para colocar no time e exibir lado a lado no status
                     if (listaCT.children.length < 5 && (listaCT.children.length <= listaTR.children.length)) {
-                        li.style.borderColor = "#5d79ae";
                         listaCT.appendChild(li);
-                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-sorteado">${escolhido}</span> -> TIME A</div>`;
+                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-branco">${escolhido}</span> -> TIME A</div>`;
                     } else if (listaTR.children.length < 5) {
-                        li.style.borderColor = "#de9b35";
                         listaTR.appendChild(li);
-                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-sorteado">${escolhido}</span> -> TIME B</div>`;
+                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-branco">${escolhido}</span> -> TIME B</div>`;
                     }
 
                     btn.disabled = false;
