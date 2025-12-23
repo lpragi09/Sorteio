@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorteador MIX </title>
+    <title>Sorteador CS 5x5 - Soares Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
         
@@ -13,7 +13,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: white;
+            color: rgb(255, 0, 242);
             font-family: 'Rajdhani', sans-serif;
             display: flex;
             justify-content: center;
@@ -33,128 +33,61 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             box-shadow: 0 0 40px rgba(0,0,0,0.6);
-            height: fit-content;
         }
 
-        h1 { 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            margin-bottom: 5px;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-        }
-
-        .sub-titulo { color: #888; margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; }
+        h1 { text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: clamp(1.5rem, 5vw, 2.5rem); }
+        .sub-titulo { color: #ff00ff; margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; }
 
         textarea {
-            width: 100%;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.6);
-            color: #de9b35;
-            border: 1px solid #444;
-            padding: 12px;
-            font-size: 16px;
-            font-family: 'Rajdhani', sans-serif;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            outline: none;
-            border-radius: 4px;
+            width: 100%; height: 120px; background: rgba(0, 0, 0, 0.6); color: #ff00ff;
+            border: 1px solid #444; padding: 12px; font-size: 16px; font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 20px; outline: none; border-radius: 4px;
         }
+
+        .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 
         .btn-sortear {
-            background: #de9b35;
-            color: black;
-            padding: 15px;
-            width: 100%;
-            max-width: 300px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            border-radius: 4px;
-            transition: 0.2s;
+            background: #ff00ff; color: rgb(255, 255, 255); padding: 15px 30px; font-size: 1.2rem;
+            font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; border-radius: 4px;
         }
 
-        .btn-sortear:hover:not(:disabled) { background: #ffb84d; transform: scale(1.02); }
-        .btn-sortear:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
-
-        #msgStatus { 
-            color: #de9b35; 
-            font-weight: bold; 
-            margin-top: 15px; 
-            min-height: 40px; 
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .btn-soares {
+            background: #ff00ff; color: white; padding: 15px 30px; font-size: 1.2rem;
+            font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; border-radius: 4px;
         }
 
-        .relogio {
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 0 0 15px #de9b35;
-        }
+        button:hover:not(:disabled) { transform: scale(1.05); filter: brightness(1.2); }
+        button:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
 
-        .resultado {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+        #msgStatus { color: #ff00ff; font-weight: bold; margin-top: 15px; min-height: 40px; font-size: 1.5rem; text-transform: uppercase; }
+        .relogio { font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px #ff00ff; }
 
-        .time {
-            flex: 1;
-            min-width: 280px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 4px;
-            min-height: 300px;
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 650px) {
-            .resultado { flex-direction: column; }
-            .time { width: 100%; }
-        }
-
+        .resultado { display: flex; flex-direction: row; justify-content: center; margin-top: 20px; gap: 15px; flex-wrap: wrap; }
+        .time { flex: 1; min-width: 280px; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 4px; min-height: 300px; }
         #timeCT { border-top: 5px solid #5d79ae; }
         #timeTR { border-top: 5px solid #de9b35; }
-
         h2 { margin-top: 0; text-transform: uppercase; font-size: 1.2rem; }
         #timeCT h2 { color: #5d79ae; }
         #timeTR h2 { color: #de9b35; }
 
         ul { list-style: none; padding: 0; margin: 0; }
-        li {
-            background: rgba(255, 255, 255, 0.03);
-            margin: 8px 0;
-            padding: 12px;
-            font-size: 1.2rem;
-            border-left: 4px solid #666;
-            animation: slideIn 0.8s ease-out forwards;
-            font-weight: bold;
-            text-align: left;
-        }
+        li { background: rgba(255, 255, 255, 0.03); margin: 8px 0; padding: 12px; font-size: 1.2rem; border-left: 4px solid #666; animation: slideIn 0.8s ease-out forwards; font-weight: bold; text-align: left; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.8) translateY(20px); filter: blur(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Draft de Operadores</h1>
-        <div class="sub-titulo">Sorteio limitado a 5 por time </div>
+        <h1>Mix do Soso Gostoso </h1>
+        <div class="sub-titulo">Sorteio com 5 jogadores por time</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
-        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear</button>
+        <div class="btn-group">
+            <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear</button>
+            <button type="button" id="btnSoares" class="btn-soares" onclick="colocarSoares()">SOARES</button>
+        </div>
         
         <div id="msgStatus">Aguardando...</div>
 
@@ -171,38 +104,74 @@
     </div>
 
     <script>
+        function colocarSoares() {
+            const listaCT = document.getElementById('listaCT');
+            const listaTR = document.getElementById('listaTR');
+            const status = document.getElementById('msgStatus');
+
+            // Verifica se Soares já foi sorteado
+            const nomesExistentes = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
+            if (nomesExistentes.includes("Soares")) {
+                alert("Soares já está em campo!");
+                return;
+            }
+
+            const li = document.createElement('li');
+            li.innerText = "Soares";
+            
+            // Sorteia o time para o Soares, respeitando o limite de 5
+            const ctCount = listaCT.children.length;
+            const trCount = listaTR.children.length;
+
+            if (ctCount < 5 && (Math.random() > 0.5 || trCount >= 5)) {
+                li.style.borderColor = "#5d79ae";
+                listaCT.appendChild(li);
+                status.innerText = "SOARES ENTROU PARA OS CTs!";
+            } else if (trCount < 5) {
+                li.style.borderColor = "#de9b35";
+                listaTR.appendChild(li);
+                status.innerText = "SOARES ENTROU PARA OS TRs!";
+            } else {
+                alert("Todos os times já estão lotados!");
+            }
+        }
+
         function executarSorteio() {
             var input = document.getElementById('listaInput');
             var btn = document.getElementById('btnAcao');
+            var btnS = document.getElementById('btnSoares');
             var status = document.getElementById('msgStatus');
             var listaCT = document.getElementById('listaCT');
             var listaTR = document.getElementById('listaTR');
 
             var todosJogadores = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
 
-            if (todosJogadores.length < 2) {
-                alert("Insira pelo menos 2 nomes!");
+            // Impedir sorteio se já houver nomes mas a lista for vazia
+            if (todosJogadores.length < 1 && listaCT.children.length === 0) {
+                alert("Insira nomes na lista!");
                 return;
             }
 
             btn.disabled = true;
-            listaCT.innerHTML = "";
-            listaTR.innerHTML = "";
+            btnS.disabled = true;
             
+            // Mantém o Soares se ele já tiver sido colocado pelo botão
+            var nomesAtuais = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
+            
+            // Embaralha novos jogadores
             todosJogadores.sort(function() { return 0.5 - Math.random() });
-            var selecionados = todosJogadores.slice(0, 10);
-
+            
             var contador = 0;
             
             function iniciarCountdown() {
-                if (contador < selecionados.length) {
-                    var tempoRestante = 5;
-                    
-                    // Intervalo para a contagem visual (1 em 1 segundo)
-                    var contagemRegressiva = setInterval(function() {
-                        status.innerHTML = `<div>Próximo Operador em:</div><div class="relogio">${tempoRestante}</div>`;
-                        tempoRestante--;
+                // Calcula quanto espaço resta somando os dois times
+                var totalEmCampo = document.querySelectorAll('li').length;
 
+                if (totalEmCampo < 10 && contador < todosJogadores.length) {
+                    var tempoRestante = 5;
+                    var contagemRegressiva = setInterval(function() {
+                        status.innerHTML = `<div>Próximo em:</div><div class="relogio">${tempoRestante}</div>`;
+                        tempoRestante--;
                         if (tempoRestante < 0) {
                             clearInterval(contagemRegressiva);
                             revelarJogador();
@@ -211,31 +180,39 @@
                 } else {
                     status.innerHTML = "DRAFT FINALIZADO!";
                     btn.disabled = false;
+                    btnS.disabled = false;
                 }
             }
 
             function revelarJogador() {
-                var li = document.createElement('li');
-                li.innerText = selecionados[contador];
+                const nomeDaVez = todosJogadores[contador];
+                
+                // Pula se o nome for Soares (pois ele tem botão próprio ou pode duplicar)
+                if (nomesAtuais.includes(nomeDaVez)) {
+                    contador++;
+                    iniciarCountdown();
+                    return;
+                }
 
-                if (contador % 2 === 0) {
+                var li = document.createElement('li');
+                li.innerText = nomeDaVez;
+
+                // Lógica de encaixe em time disponível
+                if (listaCT.children.length < 5 && (listaCT.children.length <= listaTR.children.length)) {
                     li.style.borderColor = "#5d79ae";
                     listaCT.appendChild(li);
-                } else {
+                } else if (listaTR.children.length < 5) {
                     li.style.borderColor = "#de9b35";
                     listaTR.appendChild(li);
                 }
                 
-                status.innerHTML = `SORTEADO: <span style="color:#fff; margin-left:10px;">${selecionados[contador]}</span>`;
+                status.innerHTML = `SORTEADO: <span style="color:#fff; margin-left:10px;">${nomeDaVez}</span>`;
                 contador++;
-                
-                // Aguarda 2 segundos com o nome na tela antes de começar o próximo countdown
                 setTimeout(iniciarCountdown, 2000);
             }
 
             iniciarCountdown();
         }
     </script>
-
 </body>
 </html>
