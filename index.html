@@ -2,16 +2,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Sorteador CS 5x5 - Stream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador CS 5x5 - Responsivo</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
         
         body {
-            /* --- CONFIGURAÇÃO DA IMAGEM DE FUNDO --- */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+            background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), 
                               url('3.png'); 
-            /* Substitua o link acima pelo link da imagem que você quiser */
-            
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -19,24 +17,33 @@
             font-family: 'Rajdhani', sans-serif;
             display: flex;
             justify-content: center;
-            padding-top: 50px;
+            padding: 20px;
             margin: 0;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
-            background: rgba(28, 33, 36, 0.9); /* Fundo semi-transparente para ver a imagem */
-            padding: 30px;
+            background: rgba(20, 24, 26, 0.92);
+            padding: 20px;
             border-radius: 8px;
-            width: 85%;
-            max-width: 850px;
+            width: 100%;
+            max-width: 900px; /* Largura máxima para monitores grandes */
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px); /* Efeito de vidro embaçado */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
             height: fit-content;
         }
 
-        h1 { text-transform: uppercase; letter-spacing: 4px; margin-bottom: 20px; }
+        h1 { 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-bottom: 5px;
+            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Fonte diminui em telas menores */
+        }
+
+        .sub-titulo { color: #888; margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; }
 
         textarea {
             width: 100%;
@@ -44,19 +51,22 @@
             background: rgba(0, 0, 0, 0.6);
             color: #de9b35;
             border: 1px solid #444;
-            padding: 10px;
-            font-size: 18px;
+            padding: 12px;
+            font-size: 16px;
             font-family: 'Rajdhani', sans-serif;
             margin-bottom: 20px;
             box-sizing: border-box;
             outline: none;
+            border-radius: 4px;
         }
 
         .btn-sortear {
             background: #de9b35;
             color: black;
-            padding: 15px 50px;
-            font-size: 22px;
+            padding: 15px 10% ; /* Padding lateral em % */
+            width: 100%;
+            max-width: 300px;
+            font-size: 1.2rem;
             font-weight: bold;
             border: none;
             cursor: pointer;
@@ -65,45 +75,69 @@
             transition: 0.2s;
         }
 
-        .btn-sortear:hover { background: #ffb84d; transform: scale(1.02); }
-        .btn-sortear:disabled { background: #444; cursor: not-allowed; transform: none; }
+        .btn-sortear:hover:not(:disabled) { background: #ffb84d; transform: scale(1.02); }
+        .btn-sortear:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
+
+        #msgStatus { 
+            color: #de9b35; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            min-height: 24px; 
+            font-size: 1.1rem;
+        }
 
         .resultado {
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 20px;
+            flex-direction: row; /* Lado a lado por padrão */
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+            flex-wrap: wrap; /* Permite quebrar linha se não couber */
         }
 
         .time {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.5);
+            flex: 1; /* Divide o espaço igualmente */
+            min-width: 280px; /* Largura mínima para não achatar demais */
+            background: rgba(0, 0, 0, 0.4);
             padding: 15px;
             border-radius: 4px;
-            min-height: 250px;
+            min-height: 300px;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste para telas pequenas (Celulares) */
+        @media (max-width: 650px) {
+            .resultado {
+                flex-direction: column; /* Um embaixo do outro */
+            }
+            .time {
+                width: 100%;
+            }
         }
 
         #timeCT { border-top: 5px solid #5d79ae; }
         #timeTR { border-top: 5px solid #de9b35; }
 
-        h2 { margin-top: 0; text-transform: uppercase; font-size: 20px; letter-spacing: 1px; }
-        #timeCT h2 { color: #5d79ae; text-shadow: 0 0 10px rgba(93, 121, 174, 0.5); }
-        #timeTR h2 { color: #de9b35; text-shadow: 0 0 10px rgba(222, 155, 53, 0.5); }
+        h2 { margin-top: 0; text-transform: uppercase; font-size: 1.2rem; }
+        #timeCT h2 { color: #5d79ae; }
+        #timeTR h2 { color: #de9b35; }
 
-        ul { list-style: none; padding: 0; text-align: left; }
+        ul { list-style: none; padding: 0; margin: 0; }
         li {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             margin: 8px 0;
-            padding: 12px;
+            padding: 10px;
             font-size: 1.1rem;
             border-left: 4px solid #666;
             animation: slideIn 0.4s forwards;
             font-weight: bold;
+            text-align: left;
+            word-wrap: break-word; /* Evita que nomes longos quebrem o layout */
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-15px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -111,12 +145,13 @@
 
     <div class="container">
         <h1>Draft de Operadores</h1>
-        <textarea id="listaInput" placeholder="Cole os nomes aqui (um por linha)..."></textarea>
+        <div class="sub-titulo">Selecione 10 nomes aleatórios</div>
         
-        <br>
-        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear Times</button>
+        <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
-        <p id="msgStatus" style="color: #de9b35; font-weight: bold; margin-top: 15px; min-height: 20px;"></p>
+        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sorteio</button>
+        
+        <p id="msgStatus"></p>
 
         <div class="resultado">
             <div class="time" id="timeCT">
@@ -138,26 +173,26 @@
             var listaCT = document.getElementById('listaCT');
             var listaTR = document.getElementById('listaTR');
 
-            var nomes = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            var todosJogadores = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
 
-            if (nomes.length < 2) {
-                alert("Insira pelo menos 2 nomes!");
+            if (todosJogadores.length < 10) {
+                alert("Mínimo de 10 nomes necessários!");
                 return;
             }
 
             btn.disabled = true;
             listaCT.innerHTML = "";
             listaTR.innerHTML = "";
-            status.innerText = "Embaralhando lista...";
+            status.innerText = "Sorteando 10 nomes...";
 
-            // Embaralhar
-            nomes.sort(function() { return 0.5 - Math.random() });
+            todosJogadores.sort(function() { return 0.5 - Math.random() });
+            var selecionados = todosJogadores.slice(0, 10);
 
             var contador = 0;
             var temporizador = setInterval(function() {
-                if (contador < nomes.length) {
+                if (contador < selecionados.length) {
                     var li = document.createElement('li');
-                    li.innerText = nomes[contador];
+                    li.innerText = selecionados[contador];
 
                     if (contador % 2 === 0) {
                         li.style.borderColor = "#5d79ae";
@@ -167,14 +202,14 @@
                         listaTR.appendChild(li);
                     }
                     
-                    status.innerText = "Sorteando: " + nomes[contador];
+                    status.innerText = "Draft: " + selecionados[contador];
                     contador++;
                 } else {
                     clearInterval(temporizador);
-                    status.innerText = "Sorteio finalizado!";
+                    status.innerText = "Time formado!";
                     btn.disabled = false;
                 }
-            }, 800);
+            }, 600); // Sorteio um pouco mais rápido
         }
     </script>
 
