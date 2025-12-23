@@ -13,7 +13,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: rgb(255, 0, 242);
+            color: #ff00ff;
             font-family: 'Rajdhani', sans-serif;
             display: flex;
             justify-content: center;
@@ -46,12 +46,7 @@
 
         .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 
-        .btn-sortear {
-            background: #ff00ff; color: rgb(255, 255, 255); padding: 15px 30px; font-size: 1.2rem;
-            font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; border-radius: 4px;
-        }
-
-        .btn-soares {
+        .btn-sortear, .btn-soares {
             background: #ff00ff; color: white; padding: 15px 30px; font-size: 1.2rem;
             font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; border-radius: 4px;
         }
@@ -59,13 +54,38 @@
         button:hover:not(:disabled) { transform: scale(1.05); filter: brightness(1.2); }
         button:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
 
-        #msgStatus { color: #ff00ff; font-weight: bold; margin-top: 15px; min-height: 40px; font-size: 1.5rem; text-transform: uppercase; }
-        .relogio { font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px #ff00ff; }
+        /* Ajuste na área de status para alinhar lado a lado */
+        #msgStatus { 
+            color: #ff00ff; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            min-height: 80px; 
+            font-size: 1.5rem; 
+            text-transform: uppercase; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
 
-        .resultado { display: flex; flex-direction: row; justify-content: center; margin-top: 20px; gap: 15px; flex-wrap: wrap; }
+        .resultado-linha {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nome-sorteado { color: #fff; }
+
+        .relogio { font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px #ff00ff; margin-top: 5px; }
+
+        .resultado-caixas { display: flex; flex-direction: row; justify-content: center; margin-top: 20px; gap: 15px; flex-wrap: wrap; }
         .time { flex: 1; min-width: 280px; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 4px; min-height: 300px; }
+        
         #timeCT { border-top: 5px solid #5d79ae; }
         #timeTR { border-top: 5px solid #de9b35; }
+        
         h2 { margin-top: 0; text-transform: uppercase; font-size: 1.2rem; }
         #timeCT h2 { color: #5d79ae; }
         #timeTR h2 { color: #de9b35; }
@@ -79,19 +99,19 @@
 <body>
 
     <div class="container">
-        <h1>Mix do Soso Gostoso </h1>
-        <div class="sub-titulo">Sorteio com 5 jogadores por time</div>
+        <h1>Mix do Soso Gostoso</h1>
+        <div class="sub-titulo">Sorteio manual com suspense de 5 segundos</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
         <div class="btn-group">
-            <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear</button>
+            <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear Próximo</button>
             <button type="button" id="btnSoares" class="btn-soares" onclick="colocarSoares()">SOARES</button>
         </div>
         
         <div id="msgStatus">Aguardando...</div>
 
-        <div class="resultado">
+        <div class="resultado-caixas">
             <div class="time" id="timeCT">
                 <h2>TIME A</h2>
                 <ul id="listaCT"></ul>
@@ -109,7 +129,6 @@
             const listaTR = document.getElementById('listaTR');
             const status = document.getElementById('msgStatus');
 
-            // Verifica se Soares já foi sorteado
             const nomesExistentes = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
             if (nomesExistentes.includes("Soares")) {
                 alert("Soares já está em campo!");
@@ -119,18 +138,17 @@
             const li = document.createElement('li');
             li.innerText = "Soares";
             
-            // Sorteia o time para o Soares, respeitando o limite de 5
             const ctCount = listaCT.children.length;
             const trCount = listaTR.children.length;
 
             if (ctCount < 5 && (Math.random() > 0.5 || trCount >= 5)) {
                 li.style.borderColor = "#5d79ae";
                 listaCT.appendChild(li);
-                status.innerText = "SOARES ENTROU PARA OS CTs!";
+                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-sorteado">TIME A</span></div>`;
             } else if (trCount < 5) {
                 li.style.borderColor = "#de9b35";
                 listaTR.appendChild(li);
-                status.innerText = "SOARES ENTROU PARA OS TRs!";
+                status.innerHTML = `<div class="resultado-linha">SOARES -> <span class="nome-sorteado">TIME B</span></div>`;
             } else {
                 alert("Todos os times já estão lotados!");
             }
@@ -144,74 +162,51 @@
             var listaCT = document.getElementById('listaCT');
             var listaTR = document.getElementById('listaTR');
 
-            var todosJogadores = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            var nomes = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            var nomesJaSorteados = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
+            var disponiveis = nomes.filter(n => !nomesJaSorteados.includes(n));
 
-            // Impedir sorteio se já houver nomes mas a lista for vazia
-            if (todosJogadores.length < 1 && listaCT.children.length === 0) {
-                alert("Insira nomes na lista!");
+            if (nomesJaSorteados.length >= 10) {
+                status.innerText = "DRAFT FINALIZADO!";
+                return;
+            }
+
+            if (disponiveis.length === 0) {
+                alert("Não há novos nomes na lista!");
                 return;
             }
 
             btn.disabled = true;
             btnS.disabled = true;
-            
-            // Mantém o Soares se ele já tiver sido colocado pelo botão
-            var nomesAtuais = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
-            
-            // Embaralha novos jogadores
-            todosJogadores.sort(function() { return 0.5 - Math.random() });
-            
-            var contador = 0;
-            
-            function iniciarCountdown() {
-                // Calcula quanto espaço resta somando os dois times
-                var totalEmCampo = document.querySelectorAll('li').length;
 
-                if (totalEmCampo < 10 && contador < todosJogadores.length) {
-                    var tempoRestante = 5;
-                    var contagemRegressiva = setInterval(function() {
-                        status.innerHTML = `<div>Próximo em:</div><div class="relogio">${tempoRestante}</div>`;
-                        tempoRestante--;
-                        if (tempoRestante < 0) {
-                            clearInterval(contagemRegressiva);
-                            revelarJogador();
-                        }
-                    }, 1000);
-                } else {
-                    status.innerHTML = "DRAFT FINALIZADO!";
+            var tempoRestante = 5;
+            var contagemRegressiva = setInterval(function() {
+                status.innerHTML = `<div>Sorteando em:</div><div class="relogio">${tempoRestante}</div>`;
+                tempoRestante--;
+
+                if (tempoRestante < 0) {
+                    clearInterval(contagemRegressiva);
+                    
+                    var indexAleatorio = Math.floor(Math.random() * disponiveis.length);
+                    var escolhido = disponiveis[indexAleatorio];
+                    var li = document.createElement('li');
+                    li.innerText = escolhido;
+
+                    // Lógica para colocar no time e exibir lado a lado no status
+                    if (listaCT.children.length < 5 && (listaCT.children.length <= listaTR.children.length)) {
+                        li.style.borderColor = "#5d79ae";
+                        listaCT.appendChild(li);
+                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-sorteado">${escolhido}</span> -> TIME A</div>`;
+                    } else if (listaTR.children.length < 5) {
+                        li.style.borderColor = "#de9b35";
+                        listaTR.appendChild(li);
+                        status.innerHTML = `<div class="resultado-linha">SORTEADO: <span class="nome-sorteado">${escolhido}</span> -> TIME B</div>`;
+                    }
+
                     btn.disabled = false;
                     btnS.disabled = false;
                 }
-            }
-
-            function revelarJogador() {
-                const nomeDaVez = todosJogadores[contador];
-                
-                // Pula se o nome for Soares (pois ele tem botão próprio ou pode duplicar)
-                if (nomesAtuais.includes(nomeDaVez)) {
-                    contador++;
-                    iniciarCountdown();
-                    return;
-                }
-
-                var li = document.createElement('li');
-                li.innerText = nomeDaVez;
-
-                // Lógica de encaixe em time disponível
-                if (listaCT.children.length < 5 && (listaCT.children.length <= listaTR.children.length)) {
-                    li.style.borderColor = "#5d79ae";
-                    listaCT.appendChild(li);
-                } else if (listaTR.children.length < 5) {
-                    li.style.borderColor = "#de9b35";
-                    listaTR.appendChild(li);
-                }
-                
-                status.innerHTML = `SORTEADO: <span style="color:#fff; margin-left:10px;">${nomeDaVez}</span>`;
-                contador++;
-                setTimeout(iniciarCountdown, 2000);
-            }
-
-            iniciarCountdown();
+            }, 1000);
         }
     </script>
 </body>
