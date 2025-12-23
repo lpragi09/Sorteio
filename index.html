@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorteador CS 5x5 - Stream</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+        
+        body {
+            /* --- CONFIGURAÇÃO DA IMAGEM DE FUNDO --- */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                              url('3.png'); 
+            /* Substitua o link acima pelo link da imagem que você quiser */
+            
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: rgba(28, 33, 36, 0.9); /* Fundo semi-transparente para ver a imagem */
+            padding: 30px;
+            border-radius: 8px;
+            width: 85%;
+            max-width: 850px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px); /* Efeito de vidro embaçado */
+            height: fit-content;
+        }
+
+        h1 { text-transform: uppercase; letter-spacing: 4px; margin-bottom: 20px; }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #de9b35;
+            border: 1px solid #444;
+            padding: 10px;
+            font-size: 18px;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .btn-sortear {
+            background: #de9b35;
+            color: black;
+            padding: 15px 50px;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .btn-sortear:hover { background: #ffb84d; transform: scale(1.02); }
+        .btn-sortear:disabled { background: #444; cursor: not-allowed; transform: none; }
+
+        .resultado {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .time {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 4px;
+            min-height: 250px;
+        }
+
+        #timeCT { border-top: 5px solid #5d79ae; }
+        #timeTR { border-top: 5px solid #de9b35; }
+
+        h2 { margin-top: 0; text-transform: uppercase; font-size: 20px; letter-spacing: 1px; }
+        #timeCT h2 { color: #5d79ae; text-shadow: 0 0 10px rgba(93, 121, 174, 0.5); }
+        #timeTR h2 { color: #de9b35; text-shadow: 0 0 10px rgba(222, 155, 53, 0.5); }
+
+        ul { list-style: none; padding: 0; text-align: left; }
+        li {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 8px 0;
+            padding: 12px;
+            font-size: 1.1rem;
+            border-left: 4px solid #666;
+            animation: slideIn 0.4s forwards;
+            font-weight: bold;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Draft de Operadores</h1>
+        <textarea id="listaInput" placeholder="Cole os nomes aqui (um por linha)..."></textarea>
+        
+        <br>
+        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sortear Times</button>
+        
+        <p id="msgStatus" style="color: #de9b35; font-weight: bold; margin-top: 15px; min-height: 20px;"></p>
+
+        <div class="resultado">
+            <div class="time" id="timeCT">
+                <h2>Counter-Terrorists</h2>
+                <ul id="listaCT"></ul>
+            </div>
+            <div class="time" id="timeTR">
+                <h2>Terrorists</h2>
+                <ul id="listaTR"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function executarSorteio() {
+            var input = document.getElementById('listaInput');
+            var btn = document.getElementById('btnAcao');
+            var status = document.getElementById('msgStatus');
+            var listaCT = document.getElementById('listaCT');
+            var listaTR = document.getElementById('listaTR');
+
+            var nomes = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+
+            if (nomes.length < 2) {
+                alert("Insira pelo menos 2 nomes!");
+                return;
+            }
+
+            btn.disabled = true;
+            listaCT.innerHTML = "";
+            listaTR.innerHTML = "";
+            status.innerText = "Embaralhando lista...";
+
+            // Embaralhar
+            nomes.sort(function() { return 0.5 - Math.random() });
+
+            var contador = 0;
+            var temporizador = setInterval(function() {
+                if (contador < nomes.length) {
+                    var li = document.createElement('li');
+                    li.innerText = nomes[contador];
+
+                    if (contador % 2 === 0) {
+                        li.style.borderColor = "#5d79ae";
+                        listaCT.appendChild(li);
+                    } else {
+                        li.style.borderColor = "#de9b35";
+                        listaTR.appendChild(li);
+                    }
+                    
+                    status.innerText = "Sorteando: " + nomes[contador];
+                    contador++;
+                } else {
+                    clearInterval(temporizador);
+                    status.innerText = "Sorteio finalizado!";
+                    btn.disabled = false;
+                }
+            }, 800);
+        }
+    </script>
+
+</body>
+</html>
