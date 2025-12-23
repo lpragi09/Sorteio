@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorteador CS 5x5 - Responsivo</title>
+    <title>Sorteador CS 5x5 - Countdown Mode</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
         
@@ -28,7 +28,7 @@
             padding: 20px;
             border-radius: 8px;
             width: 100%;
-            max-width: 900px; /* Largura máxima para monitores grandes */
+            max-width: 900px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -40,7 +40,7 @@
             text-transform: uppercase; 
             letter-spacing: 2px; 
             margin-bottom: 5px;
-            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Fonte diminui em telas menores */
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
         }
 
         .sub-titulo { color: #888; margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; }
@@ -63,7 +63,7 @@
         .btn-sortear {
             background: #de9b35;
             color: black;
-            padding: 15px 10% ; /* Padding lateral em % */
+            padding: 15px;
             width: 100%;
             max-width: 300px;
             font-size: 1.2rem;
@@ -82,22 +82,33 @@
             color: #de9b35; 
             font-weight: bold; 
             margin-top: 15px; 
-            min-height: 24px; 
-            font-size: 1.1rem;
+            min-height: 40px; 
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .relogio {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 15px #de9b35;
         }
 
         .resultado {
             display: flex;
-            flex-direction: row; /* Lado a lado por padrão */
+            flex-direction: row;
             justify-content: center;
             margin-top: 20px;
             gap: 15px;
-            flex-wrap: wrap; /* Permite quebrar linha se não couber */
+            flex-wrap: wrap;
         }
 
         .time {
-            flex: 1; /* Divide o espaço igualmente */
-            min-width: 280px; /* Largura mínima para não achatar demais */
+            flex: 1;
+            min-width: 280px;
             background: rgba(0, 0, 0, 0.4);
             padding: 15px;
             border-radius: 4px;
@@ -105,14 +116,9 @@
             box-sizing: border-box;
         }
 
-        /* Ajuste para telas pequenas (Celulares) */
         @media (max-width: 650px) {
-            .resultado {
-                flex-direction: column; /* Um embaixo do outro */
-            }
-            .time {
-                width: 100%;
-            }
+            .resultado { flex-direction: column; }
+            .time { width: 100%; }
         }
 
         #timeCT { border-top: 5px solid #5d79ae; }
@@ -126,18 +132,17 @@
         li {
             background: rgba(255, 255, 255, 0.03);
             margin: 8px 0;
-            padding: 10px;
-            font-size: 1.1rem;
+            padding: 12px;
+            font-size: 1.2rem;
             border-left: 4px solid #666;
-            animation: slideIn 0.4s forwards;
+            animation: slideIn 0.8s ease-out forwards;
             font-weight: bold;
             text-align: left;
-            word-wrap: break-word; /* Evita que nomes longos quebrem o layout */
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.8) translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
     </style>
 </head>
@@ -145,13 +150,13 @@
 
     <div class="container">
         <h1>Draft de Operadores</h1>
-        <div class="sub-titulo">Selecione 10 nomes aleatórios</div>
+        <div class="sub-titulo">Sorteio limitado a 5 por time com suspense</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
-        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Sorteio</button>
+        <button type="button" id="btnAcao" class="btn-sortear" onclick="executarSorteio()">Gerar Partida</button>
         
-        <p id="msgStatus"></p>
+        <div id="msgStatus">Aguardando...</div>
 
         <div class="resultado">
             <div class="time" id="timeCT">
@@ -175,41 +180,60 @@
 
             var todosJogadores = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
 
-            if (todosJogadores.length < 10) {
-                alert("Mínimo de 10 nomes necessários!");
+            if (todosJogadores.length < 2) {
+                alert("Insira pelo menos 2 nomes!");
                 return;
             }
 
             btn.disabled = true;
             listaCT.innerHTML = "";
             listaTR.innerHTML = "";
-            status.innerText = "Sorteando 10 nomes...";
-
+            
             todosJogadores.sort(function() { return 0.5 - Math.random() });
             var selecionados = todosJogadores.slice(0, 10);
 
             var contador = 0;
-            var temporizador = setInterval(function() {
+            
+            function iniciarCountdown() {
                 if (contador < selecionados.length) {
-                    var li = document.createElement('li');
-                    li.innerText = selecionados[contador];
-
-                    if (contador % 2 === 0) {
-                        li.style.borderColor = "#5d79ae";
-                        listaCT.appendChild(li);
-                    } else {
-                        li.style.borderColor = "#de9b35";
-                        listaTR.appendChild(li);
-                    }
+                    var tempoRestante = 5;
                     
-                    status.innerText = "Draft: " + selecionados[contador];
-                    contador++;
+                    // Intervalo para a contagem visual (1 em 1 segundo)
+                    var contagemRegressiva = setInterval(function() {
+                        status.innerHTML = `<div>Próximo Operador em:</div><div class="relogio">${tempoRestante}</div>`;
+                        tempoRestante--;
+
+                        if (tempoRestante < 0) {
+                            clearInterval(contagemRegressiva);
+                            revelarJogador();
+                        }
+                    }, 1000);
                 } else {
-                    clearInterval(temporizador);
-                    status.innerText = "Time formado!";
+                    status.innerHTML = "DRAFT FINALIZADO!";
                     btn.disabled = false;
                 }
-            }, 600); // Sorteio um pouco mais rápido
+            }
+
+            function revelarJogador() {
+                var li = document.createElement('li');
+                li.innerText = selecionados[contador];
+
+                if (contador % 2 === 0) {
+                    li.style.borderColor = "#5d79ae";
+                    listaCT.appendChild(li);
+                } else {
+                    li.style.borderColor = "#de9b35";
+                    listaTR.appendChild(li);
+                }
+                
+                status.innerHTML = `SORTEADO: <span style="color:#fff; margin-left:10px;">${selecionados[contador]}</span>`;
+                contador++;
+                
+                // Aguarda 2 segundos com o nome na tela antes de começar o próximo countdown
+                setTimeout(iniciarCountdown, 2000);
+            }
+
+            iniciarCountdown();
         }
     </script>
 
