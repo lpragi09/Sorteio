@@ -122,7 +122,7 @@
 
     <div class="container">
         <h1>Mix do Soso Gostoso</h1>
-        <div class="sub-titulo">Arraste um sorteado no nome de outro para troca-los </div>
+        <div class="sub-titulo">Arraste um sorteado no nome de outro para trocá-los</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
@@ -146,7 +146,6 @@
     </div>
 
     <script>
-        // Função para formatar o nome com limite de 35 caracteres
         function formatarNome(nome) {
             if (nome.length > 35) {
                 return nome.substring(0, 32) + "...";
@@ -244,13 +243,14 @@
             var nomes = input.value.split('\n').map(n => n.trim()).filter(n => n !== "");
             var nomesJaSorteados = Array.from(document.querySelectorAll('li')).map(li => li.innerText);
             
-            // Filtro inteligente que considera nomes truncados ou originais
             var disponiveis = nomes.filter(n => {
                 let formatado = formatarNome(n);
                 return !nomesJaSorteados.includes(formatado);
             });
 
-            if (nomesJaSorteados.length >= 10) {
+            var vagasRestantes = 10 - nomesJaSorteados.length;
+
+            if (vagasRestantes <= 0) {
                 status.innerText = "DRAFT FINALIZADO!";
                 return;
             }
@@ -258,6 +258,18 @@
             if (disponiveis.length === 0) {
                 alert("Não há novos nomes na lista!");
                 return;
+            }
+
+            // --- LÓGICA GARANTIDA PARA LUIZ/LUIS ---
+            var luizesDisponiveis = disponiveis.filter(n => n.toLowerCase().includes("luiz") || n.toLowerCase().includes("luis"));
+            var escolhidoOriginal;
+
+            // Se as vagas que restam forem iguais à quantidade de "Luizes" sobrando, força um deles.
+            // Caso contrário, sorteia qualquer um da lista (incluindo Luizes se der sorte).
+            if (luizesDisponiveis.length >= vagasRestantes) {
+                escolhidoOriginal = luizesDisponiveis[Math.floor(Math.random() * luizesDisponiveis.length)];
+            } else {
+                escolhidoOriginal = disponiveis[Math.floor(Math.random() * disponiveis.length)];
             }
 
             btn.disabled = true;
@@ -270,8 +282,6 @@
                 if (tempoRestante < 0) {
                     clearInterval(contagemRegressiva);
                     
-                    var indexAleatorio = Math.floor(Math.random() * disponiveis.length);
-                    var escolhidoOriginal = disponiveis[indexAleatorio];
                     var nomeExibicao = formatarNome(escolhidoOriginal);
                     var li = criarItemLista(escolhidoOriginal);
 
