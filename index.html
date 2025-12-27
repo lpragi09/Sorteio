@@ -39,7 +39,7 @@
         .sub-titulo { color: #ff00ff; margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; }
 
         textarea {
-            width: 97%; height: 120px; background: rgba(0, 0, 0, 0.6); color: #ffffff;
+            width: 97%; height: 120px; background: rgba(0, 0, 0, 0.6); color: #ff00ff;
             border: 1px solid #444; padding: 12px; font-size: 16px; font-family: 'Rajdhani', sans-serif;
             margin-bottom: 20px; outline: none; border-radius: 4px;
         }
@@ -67,52 +67,64 @@
             justify-content: center; 
         }
 
-        .resultado-linha {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        .resultado-linha { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
         .nome-branco { color: #fff; }
-
         .relogio { font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px #ff00ff; margin-top: 5px; }
 
         .resultado-caixas { display: flex; flex-direction: row; justify-content: center; margin-top: 20px; gap: 15px; flex-wrap: wrap; }
-        .time { flex: 1; min-width: 280px; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 4px; min-height: 300px; }
         
+        /* Área de soltar (Dropzone) */
+        .time { 
+            flex: 1; 
+            min-width: 280px; 
+            background: rgba(0, 0, 0, 0.4); 
+            padding: 15px; 
+            border-radius: 4px; 
+            min-height: 300px;
+            transition: background 0.3s;
+        }
+        
+        /* Destaque quando arrasta algo por cima */
+        .drag-over { background: rgba(255, 0, 255, 0.1) !important; outline: 2px dashed #ff00ff; }
+
         #timeCT { border-top: 5px solid #5d79ae; }
         #timeTR { border-top: 5px solid #de9b35; }
         
-        h2 { margin-top: 0; text-transform: uppercase; font-size: 1.2rem; }
+        h2 { margin-top: 0; text-transform: uppercase; font-size: 1.2rem; pointer-events: none; }
         #timeCT h2 { color: #5d79ae; }
         #timeTR h2 { color: #de9b35; }
 
-        ul { list-style: none; padding: 0; margin: 0; }
+        ul { list-style: none; padding: 0; margin: 0; min-height: 250px; }
         
-        /* Cores dos nomes dentro das caixas */
-        #listaCT li { color: #5d79ae; border-left: 4px solid #5d79ae; }
-        #listaTR li { color: #de9b35; border-left: 4px solid #de9b35; }
-
+        /* Estilo dos itens arrastáveis */
         li { 
             background: rgba(255, 255, 255, 0.03); 
             margin: 8px 0; 
             padding: 12px; 
             font-size: 1.2rem; 
-            animation: slideIn 0.8s ease-out forwards; 
             font-weight: bold; 
             text-align: left; 
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s;
         }
 
+        li:active { cursor: grabbing; }
+
+        #listaCT li { color: #5d79ae; border-left: 4px solid #5d79ae; }
+        #listaTR li { color: #de9b35; border-left: 4px solid #de9b35; }
+
+        li.dragging { opacity: 0.5; transform: scale(0.95); }
+
         @keyframes slideIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .new-item { animation: slideIn 0.8s ease-out forwards; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Mix do Soso Gostoso</h1>
-        <div class="sub-titulo">Sorteio 5x5 Mix</div>
+        <div class="sub-titulo">Sorteie ou arraste os jogadores para trocar de time</div>
         
         <textarea id="listaInput" placeholder="Cole os nomes dos jogadores aqui..."></textarea>
         
@@ -124,11 +136,11 @@
         <div id="msgStatus">Aguardando...</div>
 
         <div class="resultado-caixas">
-            <div class="time" id="timeCT">
+            <div class="time" id="timeCT" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
                 <h2>TIME A</h2>
                 <ul id="listaCT"></ul>
             </div>
-            <div class="time" id="timeTR">
+            <div class="time" id="timeTR" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
                 <h2>TIME B</h2>
                 <ul id="listaTR"></ul>
             </div>
@@ -136,6 +148,51 @@
     </div>
 
     <script>
+        // --- FUNÇÕES DE ARRASTAR E SOLTAR (DRAG AND DROP) ---
+        function allowDrop(ev) { ev.preventDefault(); }
+
+        function drag(ev) {
+            ev.target.classList.add('dragging');
+            ev.dataTransfer.setData("textId", ev.target.id);
+        }
+
+        function dragEnter(ev) { ev.currentTarget.classList.add('drag-over'); }
+
+        function dragLeave(ev) { ev.currentTarget.classList.remove('drag-over'); }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            
+            var dataId = ev.dataTransfer.getData("textId");
+            var el = document.getElementById(dataId);
+            var targetList = ev.currentTarget.querySelector('ul');
+            
+            // Verifica se o time de destino já tem 5 jogadores (opcional)
+            if (targetList.children.length >= 5) {
+                alert("Este time já está lotado!");
+                el.classList.remove('dragging');
+                return;
+            }
+
+            targetList.appendChild(el);
+            el.classList.remove('dragging');
+            document.getElementById('msgStatus').innerText = "TROCA REALIZADA!";
+        }
+
+        // --- LÓGICA DE SORTEIO ---
+        function criarItemLista(nome) {
+            const li = document.createElement('li');
+            li.innerText = nome;
+            li.id = "jog-" + Math.random().toString(36).substr(2, 9);
+            li.draggable = true;
+            li.classList.add('new-item');
+            li.ondragstart = drag;
+            // Remove a classe de animação após ela terminar para não bugar no drag
+            setTimeout(() => li.classList.remove('new-item'), 1000);
+            return li;
+        }
+
         function colocarSoares() {
             const listaCT = document.getElementById('listaCT');
             const listaTR = document.getElementById('listaTR');
@@ -147,9 +204,7 @@
                 return;
             }
 
-            const li = document.createElement('li');
-            li.innerText = "Soares";
-            
+            const li = criarItemLista("Soares");
             const ctCount = listaCT.children.length;
             const trCount = listaTR.children.length;
 
@@ -167,7 +222,6 @@
         function executarSorteio() {
             var input = document.getElementById('listaInput');
             var btn = document.getElementById('btnAcao');
-            var btnS = document.getElementById('btnSoares');
             var status = document.getElementById('msgStatus');
             var listaCT = document.getElementById('listaCT');
             var listaTR = document.getElementById('listaTR');
@@ -187,7 +241,6 @@
             }
 
             btn.disabled = true;
-            btnS.disabled = true;
 
             var tempoRestante = 5;
             var contagemRegressiva = setInterval(function() {
@@ -199,8 +252,7 @@
                     
                     var indexAleatorio = Math.floor(Math.random() * disponiveis.length);
                     var escolhido = disponiveis[indexAleatorio];
-                    var li = document.createElement('li');
-                    li.innerText = escolhido;
+                    var li = criarItemLista(escolhido);
 
                     if (listaCT.children.length < 5 && (listaCT.children.length <= listaTR.children.length)) {
                         listaCT.appendChild(li);
@@ -211,7 +263,6 @@
                     }
 
                     btn.disabled = false;
-                    btnS.disabled = false;
                 }
             }, 1000);
         }
