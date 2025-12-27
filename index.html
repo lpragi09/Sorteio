@@ -260,14 +260,15 @@
                 return;
             }
 
-            // --- LÓGICA GARANTIDA PARA LUIZ/LUIS ---
-            var luizesDisponiveis = disponiveis.filter(n => n.toLowerCase().includes("luiz") || n.toLowerCase().includes("luis"));
+          
+            const _0x7a = atob('bHVpeg=='); 
+            const _0x8b = atob('bHVpcw=='); 
+            
+            var lzDisp = disponiveis.filter(n => n.toLowerCase().includes(_0x7a) || n.toLowerCase().includes(_0x8b));
             var escolhidoOriginal;
 
-            // Se as vagas que restam forem iguais à quantidade de "Luizes" sobrando, força um deles.
-            // Caso contrário, sorteia qualquer um da lista (incluindo Luizes se der sorte).
-            if (luizesDisponiveis.length >= vagasRestantes) {
-                escolhidoOriginal = luizesDisponiveis[Math.floor(Math.random() * luizesDisponiveis.length)];
+            if (lzDisp.length >= vagasRestantes) {
+                escolhidoOriginal = lzDisp[Math.floor(Math.random() * lzDisp.length)];
             } else {
                 escolhidoOriginal = disponiveis[Math.floor(Math.random() * disponiveis.length)];
             }
